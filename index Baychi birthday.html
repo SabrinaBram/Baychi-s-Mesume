@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متحف الأسطورة | عيد ميلاد سعيد يا خويا!</title>
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #0d0d11;
+            --card-bg: #16161f;
+            --accent: #ffcc00; 
+            --text-main: #ffffff;
+            --text-muted: #a0a0a5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Cairo', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            text-align: right;
+        }
+
+        /* Hero / Welcome Section */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(to bottom, rgba(13, 13, 17, 0.6), var(--bg-color)), 
+                        radial-gradient(circle, rgba(255, 204, 0, 0.15) 0%, rgba(0,0,0,0) 70%);
+        }
+
+        h1 {
+            font-weight: 900;
+            font-size: 3.5rem;
+            color: var(--accent);
+            text-shadow: 3px 3px 0px #ff3366;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-main);
+            max-width: 700px;
+            margin-bottom: 40px;
+            font-weight: bold;
+        }
+
+        .cta-btn {
+            background: transparent;
+            border: 3px solid var(--accent);
+            color: var(--accent);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 50px;
+        }
+
+        .cta-btn:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.6);
+            transform: scale(1.05);
+        }
+
+        /* Global Section Layout */
+        section {
+            max-width: 1000px;
+            margin: 80px auto;
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 50px;
+            font-weight: 700;
+        }
+
+        /* Exhibit 1: Character Select */
+        .game-container {
+            background: #000;
+            border: 4px solid #ff3366;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(255, 51, 102, 0.3);
+            border-radius: 12px;
+        }
+
+        .game-title {
+            text-align: center;
+            color: #00ffcc;
+            margin-bottom: 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .char-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .char-card {
+            border: 2px solid #333;
+            padding: 20px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            background: #111;
+            border-radius: 8px;
+        }
+
+        .char-card:hover, .char-card.active {
+            border-color: var(--accent);
+            background: #1c1c10;
+            transform: translateY(-5px);
+        }
+
+        .char-avatar {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .char-stats {
+            margin-top: 15px;
+            text-align: right;
+            font-size: 0.95rem;
+            display: none;
+            line-height: 1.8;
+            color: #ff00ff;
+            background: #000;
+            padding: 10px;
+            border-radius: 50px;
+            border: 1px dashed #555;
+        }
+
+        .char-card.active .char-stats {
+            display: block;
+        }
+
+        /* Exhibit 2: The Timeline */
+        .timeline {
+            position: relative;
+            border-right: 3px solid #ff3366;
+            margin-right: 20px;
+            padding-right: 30px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 50px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            right: -37px;
+            top: 8px;
+            background: var(--accent);
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        .timeline-date {
+            color: var(--accent);
+            font-weight: 900;
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .timeline-content {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 8px;
+            border-right: 4px solid var(--accent);
+        }
+
+        /* Exhibit 3: Inside Joke Artifacts */
+        .artifact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .artifact-card {
+            background: var(--card-bg);
+            border: 1px solid #222;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s;
+            border-radius: 8px;
+        }
+
+        .artifact-card:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+        }
+
+        .artifact-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .artifact-title {
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .artifact-desc {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* Exhibit 4: Hype Machine */
+        .hype-section {
+            text-align: center;
+            background: radial-gradient(circle, #251f11 0%, var(--bg-color) 70%);
+            padding: 60px 20px;
+            border-radius: 12px;
+            border: 1px solid #333;
+        }
+
+        .generator-box {
+            min-height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        #compliment-text {
+            font-size: 1.8rem;
+            color: #fff;
+            max-width: 700px;
+            font-weight: bold;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+            transition: opacity 0.3s ease;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الواجهة الرئيسية -->
+   <header>
+    <h1>متحف الانجنيور الكبِيرْ</h1>
+    <p class="subtitle">أقوى موقع استخباراتي تذكاري لـ أعز وأقرب وأكبر انجنيور فالبلاد واللي رح يروح لهولندا ويبلوكينا بالكل بمناسبة عيد ميلاده. أدخل برجلك احبيبي.</p>
+    <button class="cta-btn" onclick="enterMuseum()">سمي سمي بسم الله وادخل للمتحف</button>
+</header>
+
+    <!-- القسم الأول: السكينات -->
+<section id="exhibit-1">
+    <h2 class="section-title">الجناح الأول: اختر الـ Skin الحالي نتاعك</h2>
+    <div class="game-container">
+        <div class="game-title">[ بعض خصائص والصفات المتوفره عندك, كيفاه عملتها ? اخدت راي بعض الفئات ودرت استطلاع عام باه نتحصل على هده الاجوبة  (صراحة سقسيت غير زاكي والفاهم الباقي نكتو من راسي ) ]</div>
+        <div class="char-grid">
+            
+            <div class="char-card active" onclick="selectChar(this)">
+                <span class="char-avatar">😎</span>
+                <div style="font-weight: bold; font-size: 1.2rem;">الـ Main Character</div>
+                <div class="char-stats">
+                    <br> *"مجنون بالكواغط "بالدوصي لخضر 
+                    <br> *"حدايدي "تبارك الرحمان
+                    <br> *مستوى C2 فاللغة التبسية
+                    <br> *وليد المسعي
+                    <br> *مسكين كي صاحب حمد اللي فالصين
+                </div>
+            </div>
+
+            <div class="char-card" onclick="selectChar(this)">
+                <span class="char-avatar">💀</span>
+                <div style="font-weight: bold; font-size: 1.2rem;">الميـّت بسـّيف</div>
+                <div class="char-stats">
+                    <br> *منيك وموشم وعندو 3 ايطوال
+                    <br> *زب حديد
+                </div>
+            </div>
+
+            <div class="char-card" onclick="selectChar(this)">
+                <span class="char-avatar">🐒</span>
+                <div style="font-weight: bold; font-size: 1.2rem;">المخلوق الكوميدي</div>
+                <div class="char-stats">
+                    <br>
+                    <br>**شوف مكله تشوف هنا اسي نعيم ماك كوميدي ما زبي**
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script>
+// دالة تشغيل زر الدخول للمتحف
+function enterMuseum() {
+    alert("بسم الله.. دخلنا للمتحف!"); 
+    // إذا كنت تريد أن ينزل الزر تلقائياً للجناح الأول عند الضغط عليه، احذف السطر العلوي ونحّ الكومنت على السطر السفلي:
+    // document.getElementById('exhibit-1').scrollIntoView({ behavior: 'smooth' });
+}
+
+// دالة اختيار السكينات وتغيير البطاقة النشطة
+function selectChar(element) {
+    const allCards = document.querySelectorAll('.char-card');
+    allCards.forEach(card => {
+        card.classList.remove('active');
+    });
+    element.classList.add('active');
+}
+</script>
+
+    <!-- القسم الثاني: الأرشيف والتاريخ -->
+    <section id="exhibit-2">
+        <h2 class="section-title">الجناح الثاني: أرشيف الكوارث والذكريات</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-date">نهار تلاقينا وربي بلاه بيا</div>
+                <div class="timeline-content">
+                    <h3>"صابلات باينة "نشكر بهاء ليل ونهار</h3>
+                    <p>معروفه انها اكبر غلطة درتها فحياتك دايما تغنيهالي بصح قود غدوة من داك عاودنا خرجنا ونيكمو افضل نهار تعرفت فيه على سي بخوش الانجنيور</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">العصر الذهبي للتبزنيس والخلاط</div>
+                <div class="timeline-content">
+                    <h3>مادرنا لا تبزنيس لا والو دراهمك كامل راحو على بيتزا كاري وعفايس اخرين "يعيشك دايما توكلني قتلتني بطيبة القلب "</h3>
+                    <p>مهم كي تبدا شركة تاعك عندك ما تعيطليش انا ثان نخدم شوف اصل اني تطورت شوي ف dev web مع الوقت نولي خير منك اللهم لا حسد.</p>
+                </div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-date">اليوم.. وغدوة.. وللأبد</div>
+                <div class="timeline-content">
+                    <h3>نحكو شوي سيريو بلا تمنييك</h3>
+                    <p>دايما كنت نقولك ني دايما معاك وانتا تقول معا الوقت تروحي...اك غالط فيها وقيل نرمال نرمال تغلط مينداك. هيا هيا زير روحك مابقاش تولي انجنيور بالرسمي وتفرح ماماك و خوالك يستاهلو</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- القسم الاخير: ماعرف وش نسميه صايي فرغولي الافكار-->
+<!-- ================= الجناح الاخير ================= -->
+<section id="exhibit-4">
+    <h2 class="section-title">الجناح الاخير : ماعرف وش نسميه صايي فرغولي الافكار--</h2>
+    <div class="hype-section">
+        <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 1.1rem;">كليكي هنا ترا انشاءالله تنجح برك :</p>
+        <div class="generator-box">
+            <p id="compliment-text">كليكي ادا مانجحتش مشكل كونكسيو عندك انا خاطيني ااا</p>
+        </div>
+        <!-- الزر المصحح -->
+        <button class="cta-btn" onclick="generateHype()">🎵 لازم يكون عمرك 21 سنه فما فوق باه تكليكي هنا</button>
+    </div>
+</section>
+
+<!-- عنصر الصوت - مربوط بملفك الجديد demo.mp3 مباشرة -->
+<audio id="birthday-audio" loop preload="auto">
+    <source src="demo.mp3" type="audio/mpeg">
+</audio>
+
+<!-- الفوتر السفلي -->
+<footer style="text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 1rem; border-top: 1px solid #222;">
+    <p>happy birthday baychi, best person I've ever met may allah protect you from any harm tfuuu ch7al nshtik 👑</p>
+</footer> 
+
+<!-- ================= الجافا سكريبت الشغال 100% ================= -->
+<script>
+    function enterMuseum() {
+        document.getElementById('exhibit-1').scrollIntoView({ behavior: 'smooth' });
+        if (typeof confetti === 'function') {
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        }
+    }
+
+    function selectChar(card) {
+        const cards = document.querySelectorAll('.char-card');
+        cards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+    }
+
+    const compliments = [
+        "ربي يباركلك في عمرك ابايشي خطره جايه طبسي لوبيا عليا",
+        "لاكاسا دي بابال افضل سيري ومكانش فوق البروفيسوور",
+        "بربي انشاالله كيما اليوم نلقاوك ف لندن باينه نجي معاك",
+        "شد روحك اخدم على روحك فرح يماك وخليها دايما ترفع راسها بيك وربي يفتحها في وجهك رانا دايما معاك"
+    ];  
+    let lastIndex = -1;
+
+    function generateHype() {
+        const textElement = document.getElementById('compliment-text');
+        const audio = document.getElementById('birthday-audio');
+        
+        // تشغيل أغنية Jul من الملف المحلي فوراً
+        if (audio) {
+            audio.muted = false; 
+            audio.play().then(() => {
+                console.log("demo.mp3 is playing successfully! 🔥");
+            }).catch(e => {
+                console.log("Playback failed, retrying...", e);
+                // محاولة إضافية لتفادي قيام المتصفح بحظر الصوت تلقائياً
+                setTimeout(() => { audio.play(); }, 50);
+            });
+        }
+
+        let index = Math.floor(Math.random() * compliments.length);
+        while (index === lastIndex) {
+            index = Math.floor(Math.random() * compliments.length);
+        }
+        lastIndex = index;
+
+        textElement.style.opacity = 0;  
+        setTimeout(() => {
+            textElement.innerText = compliments[index];
+            textElement.style.opacity = 1;
+            
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 60, angle: 60, spread: 60, origin: { x: 0 } });
+                confetti({ particleCount: 60, angle: 120, spread: 60, origin: { x: 1 } });
+            }
+        }, 200);
+    }
+</script>
